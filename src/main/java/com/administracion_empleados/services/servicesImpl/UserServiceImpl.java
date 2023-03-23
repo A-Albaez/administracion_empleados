@@ -2,10 +2,13 @@ package com.administracion_empleados.services.servicesImpl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.administracion_empleados.models.User;
 import com.administracion_empleados.repositories.UserRepository;
 import com.administracion_empleados.services.UserService;
 
+@Service
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 

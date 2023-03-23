@@ -31,10 +31,14 @@ public class User {
     private String occupation;
     @Column(name = "DATE_OF_BIRTH")
     private Date dateOfBirth;
+    @Column(name = "AGE")
+    private int age;
     @Column(name = "GENDER")
     private String gender;
     @Column(name = "ROLE")
     private String role;
+    @Column(name = "HIRING_DATE")
+    private Date hiringDate;
 
     
 

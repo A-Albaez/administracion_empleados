@@ -2,9 +2,6 @@ package com.administracion_empleados.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-// import java.util.Arrays;
-// import java.util.List;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

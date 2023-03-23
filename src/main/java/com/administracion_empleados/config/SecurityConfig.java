@@ -1,12 +1,13 @@
 package com.administracion_empleados.config;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
@@ -16,14 +17,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 import com.administracion_empleados.services.CustomUserDetailsService;
 
-// import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+
+public class SecurityConfig implements WebMvcConfigurer {
 
         @Autowired
         private CustomUserDetailsService userDetailsService;
@@ -35,16 +37,18 @@ public class SecurityConfig {
                 auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         }
 
-        public void configure(WebSecurity web) throws Exception {
-                web.ignoring().requestMatchers("/assets/css/**", "/assets/js/**", "/assets/img/**", "/assets/scss/**",
-                                "/assets//**");
-        }
+        // public void configure(WebSecurity web) throws Exception {
+        //         web.ignoring().requestMatchers("/assets/css/**", "/assets/js/**", "/assets/img/**", "/assets/scss/**",
+        //                         "/assets//**");
+        // }
+
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                         .authorizeHttpRequests(authorize -> authorize
-                                        .requestMatchers("/profile").hasRole("admin")
+                                        .requestMatchers("users/profile").hasRole("admin")
+                                        .requestMatchers("/assets/**").permitAll()
                                         .anyRequest().authenticated())
                         .formLogin(login -> login
                                         .loginPage("/login")
@@ -61,15 +65,13 @@ public class SecurityConfig {
                                         .permitAll())
                         .sessionManagement(session -> session
                                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                                        .invalidSessionUrl("/login?expired=true")
+                                        .invalidSessionUrl("/login")
                                         .maximumSessions(1)
                                         .maxSessionsPreventsLogin(true)
                                         .expiredUrl("/login?expired=true")
                                         .sessionRegistry(sessionRegistry())
                                         .and()
-                                        .sessionFixation().migrateSession())
-                                        
-                        // .addFilterBefore(new SessionExpiredFilter(), ChannelProcessingFilter.class)
+                                        .sessionFixation().migrateSession())                                        
                         .exceptionHandling(exceptionHandling -> exceptionHandling
                                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?expired=true"))
                                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.NOT_FOUND)));

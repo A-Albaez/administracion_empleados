@@ -16,13 +16,13 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
                 Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-                if (roles.contains("ROLE_ADMIN"))
+                if (roles.contains("admin"))
                 {
-                    request.getSession(false).setMaxInactiveInterval(60);
+                    request.getSession(false).setMaxInactiveInterval(1800);
                 }
                 else
                 {
-                    request.getSession(false).setMaxInactiveInterval(120);
+                    request.getSession(false).setMaxInactiveInterval(1800);
                 }
                 //Your login success url goes here, currently login success url="/"
                 response.sendRedirect("/home");
