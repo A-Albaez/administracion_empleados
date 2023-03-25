@@ -4,7 +4,6 @@ package com.administracion_empleados.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,12 +35,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
                 auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         }
-
-        // public void configure(WebSecurity web) throws Exception {
-        //         web.ignoring().requestMatchers("/assets/css/**", "/assets/js/**", "/assets/img/**", "/assets/scss/**",
-        //                         "/assets//**");
-        // }
-
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

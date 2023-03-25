@@ -8,11 +8,16 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.context.request.RequestContextHolder;
 
+import com.administracion_empleados.models.User;
 import com.administracion_empleados.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 
 @Controller
 public class HomeController {
@@ -36,6 +41,17 @@ public class HomeController {
         String errorMessage = request.getParameter("error");
         if (errorMessage != null) {
             model.addAttribute("errorMessage", "Invalid credentials");
+        }
+
+        // Agregar el atributo al header después de la autenticación exitosa
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getResponse();
+        if (response != null && response.isCommitted() == false) {
+            String username = auth.getName();
+            response.addHeader("X-Username", username);
+            User user = uService.findUserByEmail(username); // Obtener el objeto Employee correspondiente
+                                                                           // al usuario autenticado
+            model.addAttribute("employee", user); // Agregar el objeto Employee al modelo
         }
         return "pages/pages-login";
     }
