@@ -52,7 +52,7 @@
       <h1>General Tables</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="/home">Home</a></li>
           <li class="breadcrumb-item">Tables</li>
           <li class="breadcrumb-item active">General</li>
         </ol>
@@ -64,8 +64,16 @@
             <div class="card-body">
               <h5 class="card-title">Employees table</h5>
 
+              <p class="text-danger" th:text="${message}"></p>
+
+              <form class="mb-3" th:action="@{/employees}" method="get">                
+                  <div class="col-sm-4 mb-2">
+                    <input type="text" class="form-control" placeholder="Search" id="searchInput" onkeyup="filterTable()">
+                </div>
+              </form>
+
               <!-- Table with hoverable rows -->
-              <table class="table table-hover">
+              <table class="table table-hover" id="employeesTable">
                 <thead>
                   <tr>
                     <th scope="col">ID</th>
@@ -76,6 +84,7 @@
                     <th scope="col">Position</th>
                     <th scope="col">Age</th>
                     <th scope="col">Start Date</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -93,6 +102,16 @@
                     <td><span th:text="${employee.occupation}"> Occupation </span></td>
                     <td><span th:text="${employee.age}"> Age </span></td>
                     <td><span th:text="${employee.hiringDate}"> Start date </span></td>
+                    <td>
+                      <a th:href="@{/users/update/{id}(id=${employee.id})}" onclick="return confirm('Are you sure to update this employee?')">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+
+                      <a th:href="@{/users/delete/{id}(id=${employee.id})}" onclick="return confirm('Are you sure to delete this employee?')">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                      
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -123,6 +142,29 @@
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <script th:inline="javascript">
+    function filterTable() {
+      var input, filter, table, tr, td, i, j;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("employeesTable");
+      tr = table.getElementsByTagName("tr");
+  
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (j = 0; j < td.length; j++) {
+          if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  </script>
+  
 </body>
 
 </html>

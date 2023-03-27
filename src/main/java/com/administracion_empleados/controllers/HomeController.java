@@ -8,50 +8,34 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.context.request.RequestContextHolder;
-
-import com.administracion_empleados.models.User;
-import com.administracion_empleados.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-
 @Controller
 public class HomeController {
     @Autowired
-    private UserService uService;
+    private UsersController usersController;
 
     @GetMapping("/home")
-    public String index() {
+    public String index(Model model) {
+        usersController.addCurrentUserToModel(model);       
         return "index";
     }
 
     @GetMapping("/login")
     public String login(HttpServletRequest request, Model model) {
-        // Si el usuario ya inició sesión, redirigir a la página de inicio
+        // Obtener información del usuario actual
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Si el usuario ya inició sesión, redirigir a la página de inicio
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            model.addAttribute("employee", uService.findAll());
             return "redirect:/home";
         }
         // Si no, mostrar la página de inicio de sesión
         String errorMessage = request.getParameter("error");
         if (errorMessage != null) {
             model.addAttribute("errorMessage", "Invalid credentials");
-        }
-
-        // Agregar el atributo al header después de la autenticación exitosa
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getResponse();
-        if (response != null && response.isCommitted() == false) {
-            String username = auth.getName();
-            response.addHeader("X-Username", username);
-            User user = uService.findUserByEmail(username); // Obtener el objeto Employee correspondiente
-                                                                           // al usuario autenticado
-            model.addAttribute("employee", user); // Agregar el objeto Employee al modelo
         }
         return "pages/pages-login";
     }
